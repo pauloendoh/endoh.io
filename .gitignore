@@ -1,0 +1,9 @@
+client/node_modules/
+
+server/.env
+server/temp/
+server/tmp/
+server/build/
+server/node_modules/
+server/.vscode/
+server/.idea/
