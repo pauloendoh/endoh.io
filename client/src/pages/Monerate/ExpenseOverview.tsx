@@ -89,9 +89,10 @@ interface IExpenseOverview {
 }
 
 const getExpensesOverview = (expenses: ExpenseGetDto[]) => {
+  const ratedExpenses = expenses.filter((e) => e.rating > 0);
   let avg =
-    expenses.reduce((sum, expense) => sum + expense.rating, 0) /
-    expenses.length;
+    ratedExpenses.reduce((sum, expense) => sum + expense.rating, 0) /
+    ratedExpenses.length;
   if (isNaN(avg)) {
     avg = 0;
   } else {

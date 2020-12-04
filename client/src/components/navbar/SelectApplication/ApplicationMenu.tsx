@@ -41,6 +41,7 @@ const ApplicationMenu = () => {
         fullWidth
         aria-controls="simple-menu"
         aria-haspopup="true"
+        data-testid="application-menu-button"
       >
         <FlexVCenter>
           <FontAwesomeIcon icon={currentApplication.faIcon} />

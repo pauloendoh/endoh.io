@@ -22,7 +22,7 @@ export const applicationOptions: IApplicationOption[] =
     ]
 
 export const getCurrentApplicationByPath = (path: string): IApplicationOption => {
-    if (path.startsWith(PATHS.monerate)) {
+    if (path.startsWith(PATHS.monerate.index)) {
         return applicationOptions.find(option => option.applicationName === 'Monerate')
     } else {
         return applicationOptions.find(option => option.applicationName === 'Home')

@@ -2,14 +2,14 @@ import { Box, Container } from "@material-ui/core";
 import MonerateDescription from "components/descriptions/MonerateDescription";
 import React, { useEffect } from "react";
 import { useLocation } from "react-router-dom";
-import AuthForm from "./AuthForm";
+import AuthForm from "./AuthForm/AuthForm";
 
 const EnterApplication = () => {
   const location = useLocation();
   const next = new URLSearchParams(location.search).get("next");
 
   useEffect(() => {
-    document.title = 'Endoh.io - Login'
+    document.title = 'endoh.io - Login'
   }, 
   []);
 

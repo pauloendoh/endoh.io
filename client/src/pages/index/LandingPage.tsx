@@ -5,11 +5,11 @@ import { Link as ScrollLink } from "react-scroll";
 import FooterDescription from "../../components/descriptions/FooterDescription";
 import LandingPageDescription from "../../components/descriptions/LandingPageDescription";
 import MonerateDescription from "../../components/descriptions/MonerateDescription";
-import AuthForm from "./AuthForm";
+import AuthForm from "./AuthForm/AuthForm";
 
 const LandingPage = () => {
   useEffect(()=> {
-    document.title = 'Endoh.io'
+    document.title = 'endoh.io'
   }, [])
   return (
     <Box>

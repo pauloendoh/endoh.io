@@ -1,5 +1,7 @@
 const PATHS = {
-    monerate: '/monerate', 
+    monerate: {
+        index: '/monerate'
+    }, 
     settings: {
         monerate: {
             index: '/settings/monerate',

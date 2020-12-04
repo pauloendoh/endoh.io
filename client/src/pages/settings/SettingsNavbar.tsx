@@ -10,32 +10,37 @@ import {
   Toolbar,
   Typography,
 } from "@material-ui/core";
-import Flex from "components/shared/Flexboxes/Flex";
-import FlexVCenter from 'components/shared/Flexboxes/FlexVCenter';
-import React from "react";
+import FlexVCenter from "components/shared/Flexboxes/FlexVCenter";
+import PATHS from "consts/PATHS";
+import React, { useEffect, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 
 const SettingsNavbar = () => {
   const classes = useStyles();
   const location = useLocation();
 
-  const next = new URLSearchParams(location.search).get("next");
+  const [closeHref, setCloseHref] = useState("/");
+
+  useEffect(() => {
+    if (location.pathname.startsWith(PATHS.settings.monerate.index)) {
+      setCloseHref(PATHS.monerate.index);
+    } else {
+      setCloseHref("/");
+    }
+  }, [location]);
 
   return (
     <AppBar className={classes.root} position="fixed" elevation={0}>
       <Toolbar>
         <Typography variant="h5">Settings</Typography>
         <Box ml="auto">
-          <Link
-            to={next?.length ? next : "/"}
-            style={{ textDecoration: "none" }}
-          >
+          <Link to={closeHref} style={{ textDecoration: "none" }}>
             <Button>
               <FlexVCenter>
-                <FontAwesomeIcon icon={faTimes} size="lg" />
-                <Box ml={1}>
+                <Box mr={1}>
                   <Typography variant="h6">Close</Typography>
                 </Box>
+                <FontAwesomeIcon icon={faTimes} size="lg" />
               </FlexVCenter>
             </Button>
           </Link>
@@ -51,7 +56,7 @@ const useStyles = makeStyles((theme: Theme) =>
       flexGrow: 1,
       background: "#202020",
       zIndex: theme.zIndex.drawer + 1,
-      borderBottom: '1px solid rgba(255, 255, 255, 0.05)'
+      borderBottom: "1px solid rgba(255, 255, 255, 0.05)",
     },
   })
 );

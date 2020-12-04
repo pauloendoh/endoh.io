@@ -11,7 +11,8 @@ import GitHubIcon from "@material-ui/icons/GitHub";
 import InstagramIcon from "@material-ui/icons/Instagram";
 import LinkedInIcon from "@material-ui/icons/LinkedIn";
 import TwitterIcon from "@material-ui/icons/Twitter";
-import Flex from 'components/shared/Flexboxes/Flex';
+import Flex from "components/shared/Flexboxes/Flex";
+import TextSecondary from "components/shared/Text/TextSecondary";
 import React from "react";
 import pauloendoh from "../../static/images/pauloendoh.jpg";
 
@@ -30,12 +31,11 @@ const FooterDescription = (props: Props) => {
         <Box fontWeight="bold">Paulo Ricardo Endoh</Box>
         <Box mt={1}>24yo CompSci student from São Paulo, Brazil.</Box>
         <Box>
-          <Typography variant="inherit" color="secondary">
-            Developer and artist wannabe.
-          </Typography>
+          <TextSecondary>Developer and artist wannabe.</TextSecondary>
         </Box>
         <Box mt={2}>
-          Built in ReactJS, Node, PostgreSQL, TypeORM, Typescript and MaterialUI.
+          Built in ReactJS, Node, PostgreSQL, TypeORM, Typescript and
+          MaterialUI.
         </Box>
         <Box>Designed in Figma and hosted in AWS.</Box>
 

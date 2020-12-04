@@ -3,14 +3,12 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Box, Tooltip } from "@material-ui/core";
 import Button from "@material-ui/core/Button";
 import Dialog from "@material-ui/core/Dialog";
-import MuiDialogActions from "@material-ui/core/DialogActions";
 import MuiDialogContent from "@material-ui/core/DialogContent";
 import MuiDialogTitle from "@material-ui/core/DialogTitle";
 import IconButton from "@material-ui/core/IconButton";
 import {
   createStyles,
   Theme,
-  useTheme,
   WithStyles,
   withStyles,
 } from "@material-ui/core/styles";
@@ -21,7 +19,7 @@ import Flex from "components/shared/Flexboxes/Flex";
 import MyCurrencyInput from "components/shared/MyInputs/MyCurrencyInput";
 import MyTextField from "components/shared/MyInputs/MyTextField";
 import CategoryGetDto from "dtos/monerate/CategoryDtos/CategoryGetDto";
-import ExpenseGetDto from "../../dtos/monerate/ExpenseGetDto";
+import PlaceGetDto from "dtos/monerate/PlaceGetDto";
 import { Form, Formik } from "formik";
 import React, { useEffect, useState } from "react";
 import { GlobalHotKeys } from "react-hotkeys";
@@ -29,19 +27,18 @@ import { connect } from "react-redux";
 import { Dispatch } from "redux";
 import { ApplicationState } from "store/store";
 import myAxios from "utils/myAxios";
-import ExpensePostDto from "../../dtos/monerate/ExpensePostDto";
-import * as monerateActions from "../../store/monerate/monerateActions";
-import SelectCategoriesInput from "./Inputs/SelectCategoriesInput/SelectCategoriesInput";
-import SelectPlaceInput from "./Inputs/SelectPlaceInput/SelectPlaceInput";
-
+import API from "../../../consts/API";
+import ExpenseGetDto from "../../../dtos/monerate/ExpenseGetDto";
+import ExpensePostDto from "../../../dtos/monerate/ExpensePostDto";
+import * as monerateActions from "../../../store/monerate/monerateActions";
+import SelectCategoryInput from "../Inputs/SelectCategoryInput/SelectCategoryInput";
+import SelectPlaceInput from "../Inputs/SelectPlaceInput/SelectPlaceInput";
 // PE 1/3 ?
 const EditExpenseModal = (props: Props) => {
   const [rating, setRating] = React.useState(0);
   const [formikInitialValues, setFormikInitialValues] = useState<
     ExpensePostDto
   >(null);
-
-  const theme = useTheme()
 
   const handleSetRating = (val: number) => {
     if (val === rating) {
@@ -62,7 +59,7 @@ const EditExpenseModal = (props: Props) => {
         rating: props.editingExpense.rating,
         value: props.editingExpense.value,
 
-        categories: props.editingExpense.categories,
+        categoryId: props.editingExpense.category?.id,
       });
 
       setRating(props.editingExpense.rating);
@@ -75,7 +72,7 @@ const EditExpenseModal = (props: Props) => {
         rating: 0,
         value: 0,
 
-        categories: [],
+        categoryId: null,
       });
     }
   }, [props.editingExpense]);
@@ -114,6 +111,19 @@ const EditExpenseModal = (props: Props) => {
       });
   };
 
+  const handleConfirmDelete = (id: number) => {
+    if (window.confirm("Delete this expense?")) {
+      myAxios
+        .delete(`${API.monerate.expense}/${id}`)
+        .then((res) => {
+          props.removeExpense(id);
+        })
+        .finally(() => {
+          props.closeExpenseModal();
+        });
+    }
+  };
+
   const keyMap = { openModal: "q" };
   const handlers = {
     openModal: () => {
@@ -125,7 +135,12 @@ const EditExpenseModal = (props: Props) => {
     <GlobalHotKeys keyMap={keyMap} handlers={handlers}>
       <Box>
         <Tooltip title="(q) Quick add expense">
-          <Button variant="contained" color="primary" onClick={handleClickOpen}>
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={handleClickOpen}
+            data-testid="new-expense-button"
+          >
             <Box display="flex" alignItems="center">
               <FontAwesomeIcon icon={faPlus} />
               <Box ml={1}>New Expense</Box>
@@ -138,7 +153,8 @@ const EditExpenseModal = (props: Props) => {
           aria-labelledby="customized-dialog-title"
           open={!!props.editingExpense}
           fullWidth
-          maxWidth="lg"
+          maxWidth="md"
+          data-testid="edit-expense-modal"
         >
           <Box pb={1} px={1}>
             <Formik
@@ -161,13 +177,9 @@ const EditExpenseModal = (props: Props) => {
                         <Typography component="legend">Place</Typography>
                         <SelectPlaceInput
                           value={values.placeId}
-                          onChange={(e) => {
-                            const val = parseFloat(e.target.value);
-                            if (val) {
-                              setFieldValue("placeId", val);
-                            } else {
-                              setFieldValue("placeId", null);
-                            }
+                          onChange={(e, value) => {
+                            const place = value as PlaceGetDto;
+                            setFieldValue("placeId", place?.id);
                           }}
                         />
                       </Box>
@@ -201,49 +213,52 @@ const EditExpenseModal = (props: Props) => {
                         />
                       </Box>
 
-                      <Box ml={2} flexGrow={1}>
-                        <Typography component="legend">Extra notes</Typography>
-                        <MyTextField
-                          id="description"
-                          name="description"
-                          value={values.description}
-                          hiddenLabel
-                          onChange={handleChange}
-                          fullWidth
-                          multiline
-                          placeholder="Reminders, links..."
-                        />
+                      <Box ml={2}>
+                        <Typography component="legend">Rating</Typography>
+                        <Box mt={1}>
+                          <Rating
+                            name="simple-controlled"
+                            value={rating}
+                            onChange={(event, newValue) => {
+                              handleSetRating(newValue);
+                            }}
+                            onKeyPress={(e) => {
+                              if (
+                                ["0", "1", "2", "3", "4", "5"].includes(e.key)
+                              ) {
+                                handleSetRating(parseFloat(e.key));
+                              }
+                            }}
+                          />
+                        </Box>
                       </Box>
-
-                      {/* <FormattedInputs /> */}
                     </Flex>
                     <Flex justifyContent="space-between">
                       <Flex mt={2}>
                         <Box>
                           <Typography component="legend">Category</Typography>
-                          <SelectCategoriesInput
-                            value={values.categories}
-                            onChange={(e) => {
-                              const val = (e.target
-                                .value as unknown) as CategoryGetDto[];
-                              setFieldValue("categories", val);
+                          <SelectCategoryInput
+                            value={values.categoryId}
+                            onChange={(e, value) => {
+                              const category = value as CategoryGetDto;
+                              setFieldValue("categoryId", category?.id);
                             }}
                           />
                         </Box>
-
-                        <Box ml={2}>
-                          <Typography component="legend">Rating</Typography>
-                          <Box mt={1}>
-                            <Rating
-                              name="simple-controlled"
-                              value={rating}
-                              onChange={(event, newValue) => {
-                                handleSetRating(newValue);
-                              }}
-            
-
-                            />
-                          </Box>
+                        <Box ml={2} flexGrow={1}>
+                          <Typography component="legend">
+                            Extra notes
+                          </Typography>
+                          <MyTextField
+                            id="description"
+                            name="description"
+                            value={values.description}
+                            hiddenLabel
+                            onChange={handleChange}
+                            fullWidth
+                            multiline
+                            placeholder="Reminders, links..."
+                          />
                         </Box>
                       </Flex>
                       <Flex alignItems="flex-end">
@@ -253,10 +268,21 @@ const EditExpenseModal = (props: Props) => {
                           // onClick={handleClose}
                           variant="contained"
                           color="primary"
-                          disableElevation
                         >
                           Save
                         </Button>
+                        {values.id ? (
+                          <Box ml={2}>
+                            <Button
+                              disabled={isSubmitting}
+                              variant="outlined"
+                              color="secondary"
+                              onClick={() => handleConfirmDelete(values.id)}
+                            >
+                              Delete
+                            </Button>
+                          </Box>
+                        ) : null}
                       </Flex>
                     </Flex>
                   </DialogContent>
@@ -316,16 +342,8 @@ const DialogContent = withStyles((theme: Theme) => ({
     paddingLeft: theme.spacing(2),
     paddingRight: theme.spacing(2),
     paddingBottom: theme.spacing(2),
-    
   },
 }))(MuiDialogContent);
-
-const DialogActions = withStyles((theme: Theme) => ({
-  root: {
-    margin: 0,
-    padding: theme.spacing(1),
-  },
-}))(MuiDialogActions);
 
 const mapStateToProps = (state: ApplicationState) => ({
   editingExpense: state.monerate.editingExpense,
@@ -334,6 +352,7 @@ const mapStateToProps = (state: ApplicationState) => ({
 const mapDispatchToProps = (dispatch: Dispatch) => ({
   addOrUpdateExpense: (expense: ExpenseGetDto) =>
     dispatch(monerateActions.addOrUpdateExpense(expense)),
+  removeExpense: (id: number) => dispatch(monerateActions.removeExpense(id)),
 
   startNewExpense: () => dispatch(monerateActions.startNewExpense()),
   closeExpenseModal: () => dispatch(monerateActions.closeExpenseModal()),

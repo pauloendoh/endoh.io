@@ -2,51 +2,49 @@ import { Box, Typography } from "@material-ui/core";
 import {
   Autocomplete,
   AutocompleteChangeDetails,
-  AutocompleteChangeReason,
+  AutocompleteChangeReason
 } from "@material-ui/lab";
+import CategoryIcon from "components/shared/CategoryIcon";
 import FlexHCenter from "components/shared/Flexboxes/FlexHCenter";
 import FlexVCenter from "components/shared/Flexboxes/FlexVCenter";
 import MyTextField from "components/shared/MyInputs/MyTextField";
-import PlaceIcon from "components/shared/PlaceIcon";
+import CategoryGetDto from "dtos/monerate/CategoryDtos/CategoryGetDto";
 import React, { useState } from "react";
 import { connect } from "react-redux";
 import { Dispatch } from "redux";
 import { ApplicationState } from "store/store";
-import PlaceGetDto from "../../../../dtos/monerate/PlaceGetDto";
 import * as monerateActions from "../../../../store/monerate/monerateActions";
 
-const SelectPlaceInput: React.FC<Props> = (props) => {
-  const initialPlace = props.value
-    ? props.places.find((p) => p.id === props.value)
+const SelectCategoryInput: React.FC<Props> = (props) => {
+  const initialCategory = props.value
+    ? props.categories.find((p) => p.id === props.value)
     : null;
 
-  const [place, setPlace] = useState<PlaceGetDto>(initialPlace);
+  const [value, setValue] = useState<CategoryGetDto>(initialCategory);
 
   return (
     <Box>
       <Autocomplete
-        id="select-place-input"
-        value={place}
+        id="select-category-input"
+        value={value}
         options={[
-          ...props.places,
+          ...props.categories,
           {
             id: null,
             userId: 0,
-            name: "+ New place",
+            name: "+ New category",
             icon: "",
             bgColor: "",
             createdAt: "",
             updatedAt: "",
           },
         ]}
-        
         renderOption={(option) => (
           <FlexVCenter>
             {option.id ? (
               <FlexVCenter>
                 <Box minWidth={30}>
-                <PlaceIcon place={option} />
-
+                  <CategoryIcon category={option} />
                 </Box>
                 <Box ml={1}>
                   <Typography variant="body2">{option.name}</Typography>
@@ -60,15 +58,15 @@ const SelectPlaceInput: React.FC<Props> = (props) => {
         getOptionLabel={(option) => option.name}
         style={{ width: 200 }}
         renderInput={(params) => (
-          <MyTextField {...params} placeholder="e.g.: Amazon" size="small"/>
+          <MyTextField {...params} placeholder="e.g.: Grocery" size="small" />
         )}
         onChange={(e, value) => {
-          const place = value as PlaceGetDto;
-          if (place && place.id === null) {
-            props.startNewPlace();
+          const selectedCategory = value as CategoryGetDto;
+          if (selectedCategory && selectedCategory.id === null) {
+            props.startNewCategory();
           } else {
-            setPlace(place);
-            props.onChange(e, place, null);
+            setValue(selectedCategory);
+            props.onChange(e, selectedCategory, null);
           }
         }}
       />
@@ -77,15 +75,14 @@ const SelectPlaceInput: React.FC<Props> = (props) => {
 };
 
 const mapStateToProps = (state: ApplicationState) => ({
-  places: state.monerate.places,
+  categories: state.monerate.categories,
 });
 
 const mapDispatchToProps = (dispatch: Dispatch) => ({
-  // add place
-  setPlaces: (places: PlaceGetDto[]) =>
-    dispatch(monerateActions.setPlaces(places)),
+  setCategories: (categories: CategoryGetDto[]) =>
+    dispatch(monerateActions.setCategories(categories)),
 
-  startNewPlace: () => dispatch(monerateActions.startNewPlace()),
+  startNewCategory: () => dispatch(monerateActions.startNewCategory()),
 });
 
 interface OwnProps {
@@ -102,4 +99,7 @@ type Props = OwnProps &
   ReturnType<typeof mapStateToProps> &
   ReturnType<typeof mapDispatchToProps>;
 
-export default connect(mapStateToProps, mapDispatchToProps)(SelectPlaceInput);
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(SelectCategoryInput);

@@ -10,14 +10,17 @@ const INITIAL_STATE: MonerateState = {
     placeId: null,
     name: '',
     valueRange: [0, 1],
-    categories: [],
+    categoryId: null,
     minRating: 0,
   },
 
   places: [],
   categories: [],
-  
-  editingExpense: null
+
+  editingExpense: null,
+
+  editingPlace: null,
+  editingCategory: null,
 }
 
 const monerateReducer: Reducer<MonerateState, MonerateActionReturns> = (state = INITIAL_STATE, action: MonerateActionReturns): MonerateState => {
@@ -26,6 +29,8 @@ const monerateReducer: Reducer<MonerateState, MonerateActionReturns> = (state = 
       return setExpenses(state, action.payload)
     case monerateActionTypes.ADD_OR_UPDATE_EXPENSE:
       return addOrUpdateExpense(state, action.payload)
+    case monerateActionTypes.REMOVE_EXPENSE:
+      return removeExpense(state, action.payload)
     case monerateActionTypes.SET_FILTER:
       return { ...state, filter: action.payload }
     case monerateActionTypes.SET_PLACES:
@@ -34,6 +39,10 @@ const monerateReducer: Reducer<MonerateState, MonerateActionReturns> = (state = 
       return { ...state, categories: action.payload }
     case monerateActionTypes.SET_EDITING_EXPENSE:
       return { ...state, editingExpense: action.payload }
+    case monerateActionTypes.SET_EDITING_PLACE:
+      return { ...state, editingPlace: action.payload }
+    case monerateActionTypes.SET_EDITING_CATEGORY:
+      return { ...state, editingCategory: action.payload }
     default:
       return { ...state }
   }
@@ -56,7 +65,7 @@ const setExpenses = (state: MonerateState, expenses: ExpenseGetDto[]): MonerateS
 const addOrUpdateExpense = (state: MonerateState, expense: ExpenseGetDto): MonerateState => {
 
   // In order to Redux detect changes. It might have an easier way, tho. 
-  const expenses = [...state.expenses] 
+  const expenses = [...state.expenses]
 
   const expenseIndex = expenses.findIndex(e => e.id === expense.id)
   if (expenseIndex >= 0) {
@@ -68,7 +77,11 @@ const addOrUpdateExpense = (state: MonerateState, expense: ExpenseGetDto): Moner
   return { ...state, expenses }
 }
 
+const removeExpense = (state: MonerateState, id: number): MonerateState => {
+  const expenses = state.expenses.filter(expense => expense.id !== id)
 
+  return { ...state, expenses }
+}
 
 
 export default monerateReducer

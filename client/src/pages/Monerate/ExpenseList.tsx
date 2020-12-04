@@ -3,30 +3,25 @@ import {
   Button,
   Divider,
   Grid,
-  makeStyles,
   Paper,
-  Theme,
-  Typography,
-  useTheme,
-  withStyles,
+  Typography
 } from "@material-ui/core";
-import Rating from "@material-ui/lab/Rating";
+import Flex from "components/shared/Flexboxes/Flex";
+import FlexVCenter from "components/shared/Flexboxes/FlexVCenter";
 import React, { useEffect, useState } from "react";
 import NumberFormat from "react-number-format";
 import { connect } from "react-redux";
 import { Dispatch } from "redux";
 import { ApplicationState } from "store/store";
-import ExpenseGetDto from "../../dtos/monerate/ExpenseGetDto";
-import { ExpensesPerDay, getExpensesPerDay } from "./ExpensesPerDay";
-import * as monerateActions from "../../store/monerate/monerateActions";
+import CategoryIcon from "../../components/shared/CategoryIcon";
+import PlaceIcon from "../../components/shared/PlaceIcon";
 import SoloRatingStar from "../../components/shared/SoloRatingStar";
-import FlexHCenter from "components/shared/Flexboxes/FlexHCenter";
-import Flex from "components/shared/Flexboxes/Flex";
-
+import ExpenseGetDto from "../../dtos/monerate/ExpenseGetDto";
+import * as monerateActions from "../../store/monerate/monerateActions";
+import { ExpensesPerDay, getExpensesPerDay } from "./ExpensesPerDay";
 // PE 3/3
 const ExpenseList = (props: Props) => {
   const [expensesPerDay, setExpensesPerDay] = useState<ExpensesPerDay[]>([]);
-  const theme = useTheme();
   useEffect(() => {
     setExpensesPerDay(getExpensesPerDay(props.expenses));
   }, [props.expenses]);
@@ -54,19 +49,7 @@ const ExpenseList = (props: Props) => {
                     />
                   </Typography>
                 </Grid>
-                <Grid item xs={1}>
-                  {/* {isNaN(day.avgRating) ? null : (
-                    <Typography variant="h6">
-                      <Flex justifyContent="flex-end" mr="2px">
-                        
-                        <SoloRatingStar
-                          value={day.avgRating}
-                          color={theme.palette.secondary.main}
-                        />
-                      </Flex>
-                    </Typography>
-                  )} */}
-                </Grid>
+                <Grid item xs={1}></Grid>
                 <Grid item xs></Grid>
                 <Grid item xs></Grid>
               </Grid>
@@ -81,7 +64,12 @@ const ExpenseList = (props: Props) => {
                 >
                   <Grid container spacing={3} alignItems="center">
                     <Grid item xs={3}>
-                      {expense.place ? expense.place.name : "---"}
+                      {expense.place ? (
+                        <FlexVCenter>
+                          <PlaceIcon place={expense.place} />
+                          <Box ml={1}>{expense.place.name}</Box>
+                        </FlexVCenter>
+                      ) : null}
                     </Grid>
                     <Grid item xs={2}>
                       {expense.name}
@@ -101,7 +89,7 @@ const ExpenseList = (props: Props) => {
                     </Grid>
                     <Grid item xs={1}>
                       <Typography variant="h6">
-                        <Flex justifyContent="flex-end" >
+                        <Flex justifyContent="flex-end">
                           <SoloRatingStar
                             value={expense.rating}
                             color="#ffb400"
@@ -110,14 +98,15 @@ const ExpenseList = (props: Props) => {
                       </Typography>
                     </Grid>
                     <Grid item xs>
-                      {expense.description}
+                      {expense.category ? (
+                        <FlexVCenter key={expense.category.id}>
+                          <CategoryIcon category={expense.category} />
+                          <Box ml={1}>{expense.category.name}</Box>
+                        </FlexVCenter>
+                      ) : null}
                     </Grid>
                     <Grid item xs>
-                      {expense.categories.length
-                        ? expense.categories.map((category) => (
-                            <Box key={category.id}>{category.name}</Box>
-                          ))
-                        : "---"}
+                      {expense.description}
                     </Grid>
                   </Grid>
                 </Button>

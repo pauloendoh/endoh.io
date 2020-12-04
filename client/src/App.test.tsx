@@ -5,7 +5,7 @@ import { BrowserRouter } from 'react-router-dom';
 import store from 'store/store';
 import App from "./App";
 
-it("should show 'Endoh.io'", async () => {
+it("should show 'endoh.io at landing page'", async () => {
   const dom = render(
     <Provider store={store}>
       <BrowserRouter>

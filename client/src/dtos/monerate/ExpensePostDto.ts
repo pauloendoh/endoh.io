@@ -8,5 +8,5 @@ export default interface ExpensePostDto{
     rating: number;
     value: number;
 
-    categories: CategoryGetDto[]
+    categoryId?: number
 }

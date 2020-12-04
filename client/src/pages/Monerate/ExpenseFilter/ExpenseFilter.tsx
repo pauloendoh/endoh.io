@@ -1,15 +1,16 @@
-import { Box, Paper, Slider, Typography, useTheme } from "@material-ui/core";
+import { Box, Paper, Typography, useTheme } from "@material-ui/core";
 import Rating from "@material-ui/lab/Rating";
 import FlexVCenter from "components/shared/Flexboxes/FlexVCenter";
 import MyTextField from "components/shared/MyInputs/MyTextField";
 import CategoryGetDto from "dtos/monerate/CategoryDtos/CategoryGetDto";
 import ExpenseGetDto from "dtos/monerate/ExpenseGetDto";
+import PlaceGetDto from "dtos/monerate/PlaceGetDto";
 import React, { useEffect, useState } from "react";
 import { connect } from "react-redux";
 import { Dispatch } from "redux";
 import { ApplicationState } from "store/store";
 import * as monerateActions from "../../../store/monerate/monerateActions";
-import SelectCategoriesInput from "../Inputs/SelectCategoriesInput/SelectCategoriesInput";
+import SelectCategoryInput from "../Inputs/SelectCategoryInput/SelectCategoryInput";
 import SelectPlaceInput from "../Inputs/SelectPlaceInput/SelectPlaceInput";
 import { IExpenseFilter } from "./IExpenseFilter";
 
@@ -25,7 +26,7 @@ const ExpenseFilter = (props: Props) => {
     minRating: 0,
     name: "",
     valueRange: [0, 1],
-    categories: [],
+    categoryId: null,
   });
 
   useEffect(
@@ -61,20 +62,20 @@ const ExpenseFilter = (props: Props) => {
             <Typography component="legend">Place</Typography>
             <SelectPlaceInput
               value={filter.placeId}
-              onChange={(e) => {
-                handleSetFilter({ ...filter, placeId: e.target.value as any });
+              onChange={(e, value) => {
+                const place = value as PlaceGetDto;
+                handleSetFilter({ ...filter, placeId: place?.id });
               }}
             />
           </Box>
 
           <Box width={275} ml={2}>
-            <Typography component="legend">
-              Expense name or extra note
-            </Typography>
+            <Typography component="legend">Find by text</Typography>
 
             <MyTextField
               fullWidth
               value={filter.name}
+              placeholder="Expense name or notes"
               InputProps={{ id: "expense-name-inner-input" }}
               onChange={(e) => {
                 handleSetFilter({ ...filter, name: e.target.value });
@@ -104,20 +105,6 @@ const ExpenseFilter = (props: Props) => {
             ]}
           />
         </Box> */}
-
-          <Box ml={2}>
-            <Typography component="legend">Category</Typography>
-            <SelectCategoriesInput
-              value={filter.categories}
-              onChange={(e) => {
-                const categories = (e.target
-                  .value as unknown) as CategoryGetDto[];
-
-                handleSetFilter({ ...filter, categories: categories });
-              }}
-            />
-          </Box>
-
           <Box ml={2}>
             <Typography component="legend">Min. Rating</Typography>
             <Rating
@@ -127,6 +114,17 @@ const ExpenseFilter = (props: Props) => {
                 handleSetFilter({ ...filter, minRating: newMinRating });
               }}
             />
+          </Box>
+          <Box ml={2}>
+            <Typography component="legend">Category</Typography>
+            <SelectCategoryInput
+              value={filter.categoryId}
+              onChange={(e, value) => {
+                const category = value as CategoryGetDto;
+                handleSetFilter({ ...filter, categoryId: category?.id });
+              }}
+            />
+          
           </Box>
         </FlexVCenter>
       </Box>

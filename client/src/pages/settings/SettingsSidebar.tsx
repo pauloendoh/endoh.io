@@ -42,14 +42,7 @@ function SettingsSidebar(props: Props) {
 
   const [redirectTo, setRedirectTo] = useState("");
   const handleClickSubmenu = (href: string) => {
-    // Getting value for ?next=/url
-    const nextValue = new URLSearchParams(location.search).get("next");
-    let nextUrl = "";
-    if (nextValue?.length) {
-      nextUrl = "?next=" + nextValue;
-    }
-
-    setRedirectTo(href + nextUrl);
+    setRedirectTo(href);
   };
 
   return (
@@ -63,11 +56,11 @@ function SettingsSidebar(props: Props) {
       <Toolbar />
       <Box className={classes.drawerContainer}>
         <List>
-          <ListItem button onClick={handleClickEndoh}>
+          {/* <ListItem button onClick={handleClickEndoh}>
             <ListItemIcon>
               <FontAwesomeIcon icon={faUserAlt} />
             </ListItemIcon>
-            <ListItemText primary="Endoh.io" />
+            <ListItemText primary="endoh.io" />
             {openEndoh ? <ExpandLess /> : <ExpandMore />}
           </ListItem>
           <Collapse in={openEndoh} timeout="auto" unmountOnExit>
@@ -79,7 +72,7 @@ function SettingsSidebar(props: Props) {
                 <ListItemText primary="General" />
               </ListItem>
             </List>
-          </Collapse>
+          </Collapse> */}
 
           <ListItem button onClick={handleClickMonerate}>
             <ListItemIcon>
@@ -127,6 +120,7 @@ const useStyles = makeStyles((theme: Theme) =>
       width: 200,
       flexShrink: 0,
     },
+
     appBar: {
       zIndex: theme.zIndex.drawer + 1,
     },

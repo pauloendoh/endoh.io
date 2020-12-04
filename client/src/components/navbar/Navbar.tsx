@@ -19,7 +19,7 @@ const Navbar = () => {
           <Typography variant="h5">
             <FlexVCenter>
               <FontAwesomeIcon icon={faFire}  className={classes.fireIcon}/>
-              <Box ml={1}>Endoh.io</Box>
+              <Box ml={1}>endoh.io</Box>
             </FlexVCenter>
           </Typography>
         </Button>

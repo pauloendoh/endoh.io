@@ -5,28 +5,24 @@ import {
   Link,
   makeStyles,
   Paper,
-
-  Typography
+  Typography,
 } from "@material-ui/core";
 import MyTextField from "components/shared/MyInputs/MyTextField";
 import { AuthUserGetDto } from "dtos/AuthUserGetDto";
 import { Form, Formik } from "formik";
 import React, { MouseEvent, useState } from "react";
 import { connect } from "react-redux";
-import { useLocation } from "react-router-dom";
 import { Dispatch } from "redux";
 import * as AuthActions from "store/auth/authActions";
 import { ApplicationState } from "store/store";
-import myAxios from "../../utils/myAxios";
-import MyAxiosError, { MyFieldError } from "../../utils/MyAxiosError";
+import myAxios from "../../../utils/myAxios";
+import MyAxiosError, { MyFieldError } from "../../../utils/MyAxiosError";
 
 const AuthForm = (props: Props) => {
   const classes = useStyles();
 
   const [signupIsSelected, setSignupIsSelected] = useState(false);
   const [responseErrors, setResponseErrors] = useState([] as MyFieldError[]);
-
-  const location = useLocation();
 
   return (
     <Box display="flex">
@@ -66,21 +62,12 @@ const AuthForm = (props: Props) => {
                 const authUser = res.data;
                 props.setAuthUser(authUser);
 
-                const nextUrl = new URLSearchParams(location.search).get(
-                  "next"
-                );
-
-                if (nextUrl) {
-                  window.location.href = nextUrl;
-                }
                 // props.UPDATE_AUTH_USER(res.data);
               })
               .catch((err: MyAxiosError) => {
                 setResponseErrors(err.response.data.errors);
               })
-              .finally(() => {
-                setSubmitting(false);
-              });
+         
           }}
         >
           {({ isSubmitting, handleChange, errors }) => (

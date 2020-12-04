@@ -1,25 +1,28 @@
 import { Box, Container } from "@material-ui/core";
-import ExpenseGetDto from "../../dtos/monerate/ExpenseGetDto";
-import PlaceGetDto from "../../dtos/monerate/PlaceGetDto";
 import React, { useEffect, useState } from "react";
 import { connect } from "react-redux";
 import { Dispatch } from "redux";
 import { ApplicationState } from "store/store";
 import myAxios from "utils/myAxios";
-import * as monerateActions from "../../store/monerate/monerateActions";
-import EditExpenseModal from "./EditExpenseModal";
-import ExpenseFilter from "./ExpenseFilter/ExpenseFilter";
-import { getFilteredExpenses } from "./ExpenseFilter/IExpenseFilter";
-import ExpenseList from "./ExpenseList";
-import ExpenseOverview from "./ExpenseOverview";
-import CategoryGetDto from "../../dtos/monerate/CategoryDtos/CategoryGetDto";
+import CategoryGetDto from "../../../dtos/monerate/CategoryDtos/CategoryGetDto";
+import ExpenseGetDto from "../../../dtos/monerate/ExpenseGetDto";
+import PlaceGetDto from "../../../dtos/monerate/PlaceGetDto";
+import * as monerateActions from "../../../store/monerate/monerateActions";
+import ExpenseFilter from "../ExpenseFilter/ExpenseFilter";
+import { getFilteredExpenses } from "../ExpenseFilter/IExpenseFilter";
+import ExpenseList from "../ExpenseList";
+import ExpenseOverview from "../ExpenseOverview";
+import EditCategoryModal from "../Modals/EditCategoryModal";
+import EditExpenseModal from "../Modals/EditExpenseModal";
+import EditPlaceModal from "../Modals/EditPlaceModal";
+
 // PE 3/3
 const MoneratePage = (props: Props) => {
   const [filteredExpenses, setFilteredExpenses] = useState<ExpenseGetDto[]>([]);
 
   useEffect(
     () => {
-      document.title = 'Monerate'
+      document.title = "Monerate";
 
       myAxios.get<ExpenseGetDto[]>("/monerate/expense/").then((res) => {
         props.setExpenses(res.data);
@@ -58,6 +61,9 @@ const MoneratePage = (props: Props) => {
       <Box mt={3}>
         <ExpenseList expenses={filteredExpenses} />
       </Box>
+
+      <EditPlaceModal />
+      <EditCategoryModal />
     </Container>
   );
 };

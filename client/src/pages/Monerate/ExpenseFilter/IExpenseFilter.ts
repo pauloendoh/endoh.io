@@ -6,7 +6,7 @@ export interface IExpenseFilter {
     placeId: number,
     name: string,
     valueRange: number[],
-    categories: CategoryGetDto[]
+    categoryId: number,
     minRating: number
 }
 
@@ -18,14 +18,8 @@ export const getFilteredExpenses = (filter: IExpenseFilter, expenses: ExpenseGet
         filteredExpenses = filteredExpenses.filter(e => e.place?.id === filter.placeId)
     }
 
-    if (filter.categories.length) {
-        const filterCategoriesIds = filter.categories.map(c => c.id)
-
-        filteredExpenses = filteredExpenses.filter(expense => {
-            const expenseCategoriesIds = expense.categories.map(c => c.id)
-
-            return filterCategoriesIds.some(f => expenseCategoriesIds.includes(f))
-        })
+    if (filter.categoryId) {
+        filteredExpenses = filteredExpenses.filter(expense => expense.category?.id === filter.categoryId)
     }
 
     if (filter.name.length) {
